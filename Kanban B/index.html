@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop B - Trello Estudantil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .drag-card {
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+        }
+        .drag-card:active {
+            cursor: grabbing;
+        }
+        .drop-column.over {
+            background-color: #e2e8f0;
+            border-color: #3b82f6;
+        }
+        .completed-card {
+            color: #10b981;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen p-4 flex flex-col items-center">
+
+    <div class="w-full max-w-5xl bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <div class="bg-[#2a3842] text-white p-4 flex justify-between items-center flex-wrap gap-2">
+            <h1 class="text-xl md:text-2xl font-bold">Programação Front End.</h1>
+            <div class="flex items-center gap-2">
+                <span class="text-red-500 font-black text-2xl">SENAI</span>
+                <span class="text-xs text-gray-300">SÃO PAULO</span>
+            </div>
+        </div>
+
+        <div class="bg-[#cc181e] text-white p-4">
+            <h2 class="text-xl md:text-3xl font-extrabold">Situação de Aprendizado #16 Drag and Drop B</h2>
+        </div>
+
+        <div class="p-6 text-gray-800 space-y-3">
+            <p class="text-base md:text-lg">
+                <strong>Contexto:</strong> O Enem e as provas finais estão chegando! Para evitar a procrastinação, você deve desenvolver um quadro estilo <em>Trello</em> para organizar os trabalhos da escola nas colunas: "A Fazer", "Em Andamento" e "Concluído".
+            </p>
+            <p class="text-base md:text-lg">
+                <strong>Objetivo:</strong> Permitir que cartões de tarefas sejam movidos livremente entre qualquer uma das três colunas de progresso.
+            </p>
+            <p class="text-red-600 font-semibold text-sm md:text-base">
+                Entrega no GitHub Pages, deixar o Link no Classroom
+            </p>
+        </div>
+    </div>
+
+    <div class="w-full max-w-5xl bg-slate-200/60 rounded-2xl p-6 md:p-8 shadow-inner flex flex-col items-center relative">
+
+        <div class="mb-6 w-full max-w-3xl flex gap-2">
+            <input type="text" id="new-task-input" placeholder="Nova tarefa..." class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+            <button onclick="addNewTask()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition">Adicionar em 'A Fazer'</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
+            
+            <div class="bg-slate-100 rounded-xl p-4 border border-slate-200 flex flex-col">
+                <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2 text-base">
+                    <span>📝</span> A Fazer
+                </h3>
+                <div id="col-todo" data-column="todo" class="drop-column flex-1 min-h-[180px] bg-slate-200/50 border-2 border-dashed border-slate-300 rounded-lg p-3 flex flex-col gap-3 transition-colors">
+                    <div id="card-1" draggable="true" class="drag-card bg-white p-3.5 rounded-lg shadow-sm border border-slate-200 text-slate-700 font-medium text-sm transition-transform active:scale-95 flex justify-between items-center group">
+                        <span class="card-text">Redação do Enem</span>
+                        <button onclick="deleteCard('card-1')" class="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-100 rounded-xl p-4 border border-slate-200 flex flex-col">
+                <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2 text-base">
+                    <span>🚀</span> Em Andamento
+                </h3>
+                <div id="col-doing" data-column="doing" class="drop-column flex-1 min-h-[180px] bg-slate-200/50 border-2 border-dashed border-slate-300 rounded-lg p-3 flex flex-col gap-3 transition-colors">
+                    <div id="card-2" draggable="true" class="drag-card bg-white p-3.5 rounded-lg shadow-sm border border-slate-200 text-slate-700 font-medium text-sm transition-transform active:scale-95 flex justify-between items-center group">
+                        <span class="card-text">Estudar Física (Óptica)</span>
+                        <button onclick="deleteCard('card-2')" class="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-100 rounded-xl p-4 border border-slate-200 flex flex-col">
+                <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2 text-base">
+                    <span>✅</span> Concluído
+                </h3>
+                <div id="col-done" data-column="done" class="drop-column flex-1 min-h-[180px] bg-slate-200/50 border-2 border-dashed border-slate-300 rounded-lg p-3 flex flex-col gap-3 transition-colors">
+                    <div id="card-3" draggable="true" class="drag-card bg-white p-3.5 rounded-lg shadow-sm border border-slate-200 text-emerald-600 line-through font-medium text-sm transition-transform active:scale-95 flex justify-between items-center group">
+                        <span class="card-text">Trabalho de História</span>
+                        <button onclick="deleteCard('card-3')" class="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">✕</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bg-[#e07b39] text-white p-3 px-6 rounded-lg font-bold text-sm md:text-base mt-8 text-center shadow-md">
+            Tempo de execução: 25 Minutos
+        </div>
+    </div>
+
+    <script>
+        let draggedCard = null;
+        let cardCounter = 4;
+
+        function init() {
+            document.querySelectorAll('.drag-card').forEach(attachCardEvents);
+            document.querySelectorAll('.drop-column').forEach(attachColumnEvents);
+
+            document.getElementById('new-task-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addNewTask();
+            });
+        }
+
+        function attachCardEvents(card) {
+            card.addEventListener('dragstart', (e) => {
+                draggedCard = card;
+                e.dataTransfer.setData('text/plain', card.id);
+                setTimeout(() => card.classList.add('opacity-40'), 0);
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('opacity-40');
+                draggedCard = null;
+            });
+        }
+
+        function attachColumnEvents(column) {
+            column.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                column.classList.add('over');
+            });
+
+            column.addEventListener('dragleave', () => {
+                column.classList.remove('over');
+            });
+
+            column.addEventListener('drop', (e) => {
+                e.preventDefault();
+                column.classList.remove('over');
+
+                if (draggedCard) {
+                    column.appendChild(draggedCard);
+                    updateCardStyle(draggedCard, column.getAttribute('data-column'));
+                }
+            });
+        }
+
+        function updateCardStyle(card, colType) {
+            if (colType === 'done') {
+                card.classList.add('text-emerald-600', 'line-through');
+                card.classList.remove('text-slate-700');
+            } else {
+                card.classList.remove('text-emerald-600', 'line-through');
+                card.classList.add('text-slate-700');
+            }
+        }
+
+        function addNewTask() {
+            const input = document.getElementById('new-task-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const cardId = `card-${cardCounter++}`;
+            const card = document.createElement('div');
+            card.id = cardId;
+            card.draggable = true;
+            card.className = 'drag-card bg-white p-3.5 rounded-lg shadow-sm border border-slate-200 text-slate-700 font-medium text-sm transition-transform active:scale-95 flex justify-between items-center group';
+            card.innerHTML = `
+                <span class="card-text">${escapeHtml(text)}</span>
+                <button onclick="deleteCard('${cardId}')" class="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">✕</button>
+            `;
+
+            document.getElementById('col-todo').appendChild(card);
+            attachCardEvents(card);
+            input.value = '';
+        }
+
+        function deleteCard(cardId) {
+            const card = document.getElementById(cardId);
+            if (card) card.remove();
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
